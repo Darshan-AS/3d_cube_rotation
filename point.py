@@ -41,27 +41,27 @@ class Point3D:
 
     def rotate_x(self, angle):
         cosine, sine = self.__get_cos_and_sine(angle)
-        self.y = self.y * cosine - self.z * sine
-        self.z = self.y * sine + self.z * cosine
+        y = self.y * cosine - self.z * sine
+        z = self.y * sine + self.z * cosine
+        self.y, self.z = y, z
         return self
 
     def rotate_y(self, angle):
         cosine, sine = self.__get_cos_and_sine(angle)
-        self.z = self.z * cosine - self.x * sine
-        self.x = self.z * sine + self.x * cosine
+        z = self.z * cosine - self.x * sine
+        x = self.z * sine + self.x * cosine
+        self.z, self.x = z, x
         return self
 
     def rotate_z(self, angle):
         cosine, sine = self.__get_cos_and_sine(angle)
-        self.x = self.x * cosine - self.y * sine
-        self.y = self.x * sine + self.y * cosine
+        x = self.x * cosine - self.y * sine
+        y = self.x * sine + self.y * cosine
+        self.x, self.y = x, y
         return self
 
     def rotate(self, angle_x, angle_y, angle_z):
-        # self.rotate_x(angle_x).rotate_y(angle_y).rotate_z(angle_z)
-        self.rotate_x(angle_x)
-        self.rotate_y(angle_y)
-        self.rotate_z(angle_z)
+        self.rotate_x(angle_x).rotate_y(angle_y).rotate_z(angle_z)
         return self
 
     def project(self, win_width, win_height, camera_distance, field_of_view):

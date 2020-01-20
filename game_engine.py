@@ -25,7 +25,7 @@ class GameEngine:
             self.screen.fill((0, 0, 0))
 
             width, height = self.screen.get_width(), self.screen.get_height()
-            fov = 100
+            fov = 200
             camera_dist = 100
 
             cube = Cube(size=100)
@@ -38,9 +38,9 @@ class GameEngine:
                 pygame.draw.line(self.screen, (255, 255, 255), vertices_2d[2], vertices_2d[3])
                 pygame.draw.line(self.screen, (255, 255, 255), vertices_2d[3], vertices_2d[0])
 
-            angle_x += 1
+            # angle_x += 1
             angle_y += 1
-            angle_z += 1
+            # angle_z += 1
 
             pygame.display.flip()
 
