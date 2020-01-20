@@ -15,6 +15,21 @@ class Point2D:
     def __repr__(self):
         return self.__str__()
 
+    def __add__(self, other):
+        return Point2D(self.x + other.x, self.y + other.y)
+
+    def __sub__(self, other):
+        return Point2D(self.x - other.x, self.y - other.y)
+
+    def __mul__(self, k):
+        return Point2D(self.x * k, self.y * k)
+
+    def __floordiv__(self, k):
+        return Point2D(self.x // k, self.y // k)
+
+    def __truediv__(self, k):
+        return Point2D(self.x / k, self.y / k)
+
 
 class Point3D:
     def __init__(self, x=0.0, y=0.0, z=0.0):
@@ -30,6 +45,21 @@ class Point3D:
 
     def __repr__(self):
         return self.__str__()
+
+    def __add__(self, other):
+        return Point3D(self.x + other.x, self.y + other.y, self.z + other.z)
+
+    def __sub__(self, other):
+        return Point3D(self.x - other.x, self.y - other.y, self.z - other.z)
+
+    def __mul__(self, k):
+        return Point3D(self.x * k, self.y * k, self.z * k)
+
+    def __floordiv__(self, k):
+        return Point3D(self.x // k, self.y // k, self.z // k)
+
+    def __truediv__(self, k):
+        return Point3D(self.x / k, self.y / k, self.z / k)
 
     @staticmethod
     def __degree_to_radian(degree):
@@ -66,7 +96,6 @@ class Point3D:
 
     def project(self, win_width, win_height, camera_distance, field_of_view):
         factor = field_of_view / (camera_distance + self.z)
-        # factor = 1
         x = self.x * factor + win_width / 2
         y = self.y * factor + win_height / 2
         return Point2D(x, y)

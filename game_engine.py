@@ -4,70 +4,62 @@ import sys
 import pygame
 
 from cube import Cube
-from point import Point2D
+from point import Point2D, Point3D
 
 
 class GameEngine:
-    def __init__(self, win_width=640, win_height=480):
-        pygame.init()
+    def __init__(self, win_width=640, win_height=480, field_of_vision=200, camera_dist=100):
+        self.width = win_width
+        self.height = win_height
+        self.fov = field_of_vision
+        self.camera_dist = camera_dist
 
-        self.screen = pygame.display.set_mode((win_width, win_height))
+        pygame.init()
+        self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption("3D Wireframe Cube Simulation")
         self.clock = pygame.time.Clock()
 
     def run(self):
-        angle_x, angle_y, angle_z = 30.0, 30.0, 0.0
-        delta_x, delta_y, delta_z = 0, 0, 0
+        angle = Point3D(30.0, 30.0, 0.0)
+        delta = Point3D(0, 0, 0)
 
-        width, height = self.screen.get_width(), self.screen.get_height()
-        mouse_start, mouse_end = None, None
         friction_factor = 0.98
-        drag = False
+        init_pos = None
+        dragging = False
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                    drag = True
-                    mouse_start = Point2D(*event.pos)
-                    print(mouse_start)
+                    dragging = True
+                    init_pos = Point2D(*event.pos)
                 elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-                    drag = False
-                elif event.type == pygame.MOUSEMOTION and drag:
+                    dragging = False
+                elif event.type == pygame.MOUSEMOTION and dragging:
                     curr_pos = Point2D(*event.pos)
-                    delta_y = (mouse_start.x - curr_pos.x) * 2 * math.pi / width
-                    delta_x = (mouse_start.y - curr_pos.y) * 2 * math.pi / height
+                    delta.y, delta.x = (init_pos - curr_pos) * 2 * math.pi / self.width
+                    angle += delta
 
-                    angle_x += delta_x
-                    angle_y += delta_y
+            cube = Cube(size=100, angle_x=angle.x, angle_y=angle.y, angle_z=angle.z)
+            self.__draw_cube(cube)
 
-            self.clock.tick(50)
-            self.screen.fill((0, 0, 0))
+            if not dragging:
+                delta *= friction_factor
 
-            width, height = self.screen.get_width(), self.screen.get_height()
-            fov = 200
-            camera_dist = 100
-
-            cube = Cube(size=100)
-            cube.rotate(angle_x, angle_y, angle_z)
-
-            for face in cube.faces:
-                vertices_2d = [tuple(cube.vertices[i].project(width, height, fov, camera_dist)) for i in face]
-                pygame.draw.line(self.screen, (255, 255, 255), vertices_2d[0], vertices_2d[1])
-                pygame.draw.line(self.screen, (255, 255, 255), vertices_2d[1], vertices_2d[2])
-                pygame.draw.line(self.screen, (255, 255, 255), vertices_2d[2], vertices_2d[3])
-                pygame.draw.line(self.screen, (255, 255, 255), vertices_2d[3], vertices_2d[0])
-
-            if not drag:
-                delta_x *= friction_factor
-                delta_y *= friction_factor
-                delta_z *= friction_factor
-
-            angle_x += delta_x
-            angle_y += delta_y
-            angle_z += delta_z
-
+            angle += delta
             pygame.display.flip()
+
+    def __draw_cube(self, cube):
+        self.clock.tick(60)
+        self.screen.fill((0, 0, 0))
+
+        for face in cube.faces:
+            vertices_2d = [tuple(cube.vertices[i].project(self.width, self.height, self.fov, self.camera_dist))
+                           for i in face]
+            pygame.draw.line(self.screen, (255, 255, 255), vertices_2d[0], vertices_2d[1])
+            pygame.draw.line(self.screen, (255, 255, 255), vertices_2d[1], vertices_2d[2])
+            pygame.draw.line(self.screen, (255, 255, 255), vertices_2d[2], vertices_2d[3])
+            pygame.draw.line(self.screen, (255, 255, 255), vertices_2d[3], vertices_2d[0])
 
 
 if __name__ == "__main__":
