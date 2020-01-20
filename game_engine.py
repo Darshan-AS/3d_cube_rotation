@@ -16,11 +16,12 @@ class GameEngine:
         self.clock = pygame.time.Clock()
 
     def run(self):
-        angle_x, angle_y, angle_z = 0.0, 0.0, 0.0
+        angle_x, angle_y, angle_z = 30.0, 30.0, 0.0
         delta_x, delta_y, delta_z = 0, 0, 0
 
         width, height = self.screen.get_width(), self.screen.get_height()
         mouse_start, mouse_end = None, None
+        friction_factor = 0.98
         drag = False
         while True:
             for event in pygame.event.get():
@@ -56,6 +57,11 @@ class GameEngine:
                 pygame.draw.line(self.screen, (255, 255, 255), vertices_2d[1], vertices_2d[2])
                 pygame.draw.line(self.screen, (255, 255, 255), vertices_2d[2], vertices_2d[3])
                 pygame.draw.line(self.screen, (255, 255, 255), vertices_2d[3], vertices_2d[0])
+
+            if not drag:
+                delta_x *= friction_factor
+                delta_y *= friction_factor
+                delta_z *= friction_factor
 
             angle_x += delta_x
             angle_y += delta_y
